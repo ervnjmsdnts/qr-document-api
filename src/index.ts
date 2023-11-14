@@ -1,9 +1,9 @@
+import 'dotenv/config';
 import express from 'express';
-import env from 'dotenv';
 import cors from 'cors';
 import authRouter from './routes/authRoutes';
-
-env.config();
+import adminRouter from './routes/adminRoutes';
+import userRouter from './routes/userRoutes';
 
 export const app = express();
 
@@ -15,7 +15,9 @@ app.get('/', (_, res) => {
   res.json({ message: 'Start' });
 });
 
-app.use('/api', authRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/admin', adminRouter);
+app.use('/api/user', userRouter);
 
 const PORT = process.env.PORT || 8080;
 
