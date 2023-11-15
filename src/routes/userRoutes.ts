@@ -149,7 +149,7 @@ userRouter.post(
       if (document.isArchived || document.status === 'SIGNED') {
         return res
           .status(400)
-          .json({ error: 'Document has been signed and archived' });
+          .json({ error: 'Document has already been signed or archived' });
       }
 
       if (document.type === 'PURCHASE_REQUEST') {
