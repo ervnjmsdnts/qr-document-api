@@ -61,12 +61,6 @@ userRouter.post(
       }
 
       if (document.type === 'PURCHASE_REQUEST') {
-        const departmentSequence: Department[] = [
-          'BO',
-          'MENRO',
-          'DRRMO',
-          'AIASO',
-        ];
       } else {
         return res.status(404).json({ error: 'Unknown document type' });
       }

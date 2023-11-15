@@ -25,22 +25,9 @@ clerkRouter.post(
   async (req: TypedRequestBody<ClerkGenerateQRSchema>, res) => {
     try {
       await prisma.$transaction(async (tx) => {
-        let nextDepartment: Department | null = null;
-        if (req.body.type === 'MEMORANDUM') {
-          nextDepartment = 'MENRO';
-        } else if (req.body.type === 'PURCHASE_REQUEST') {
-          nextDepartment = 'BO';
-        } else if (req.body.type === 'PAYROLL') {
-          nextDepartment = 'AsO';
-        } else if (req.body.type === 'VOUCHER_BILLING') {
-          nextDepartment = 'BPLO';
-        } else {
-          return res.status(404).json({ error: 'Unknown document type' });
-        }
         const document = await tx.document.create({
           data: {
             ...req.body,
-            nextDepartment,
           },
         });
 
