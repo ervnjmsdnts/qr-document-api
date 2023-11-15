@@ -298,4 +298,23 @@ userRouter.put(
   },
 );
 
+userRouter.get('/get-document', async (req, res) => {
+  try {
+    const { documentId } = req.query as { documentId: string };
+
+    const document = await prisma.document.findFirst({
+      where: { id: documentId },
+    });
+
+    if (!document) {
+      return res.status(404).json({ error: 'Document not found' });
+    }
+
+    return res.status(200).json(document);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Failed to get document' });
+  }
+});
+
 export default userRouter;
