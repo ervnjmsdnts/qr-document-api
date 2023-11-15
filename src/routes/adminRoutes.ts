@@ -245,7 +245,7 @@ adminRouter.post(
 );
 
 adminRouter.get(
-  'get-user',
+  '/get-user',
   async (req: TypedRequestBody<{ userId: string }>, res) => {
     try {
       const user = await prisma.user.findFirst({
