@@ -22,18 +22,19 @@ clerkRouter.post(
   '/generate-qr',
   async (req: TypedRequestBody<ClerkGenerateQRSchema>, res) => {
     try {
-      await prisma.$transaction(async (tx) => {
+      const { url } = await prisma.$transaction(async (tx) => {
         let nextDepartment: Department | null = null;
         if (req.body.type === 'MEMORANDUM') {
           nextDepartment = 'MO';
-        } else if (req.body.type === 'PURCHASE_REQUEST') {
+        }
+        if (req.body.type === 'PURCHASE_REQUEST') {
           nextDepartment = 'MPDC';
-        } else if (req.body.type === 'PAYROLL') {
+        }
+        if (req.body.type === 'PAYROLL') {
           nextDepartment = 'MPDC';
-        } else if (req.body.type === 'VOUCHER_BILLING') {
+        }
+        if (req.body.type === 'VOUCHER_BILLING') {
           nextDepartment = 'MPDC';
-        } else {
-          return res.status(404).json({ error: 'Unknown document type' });
         }
 
         const document = await tx.document.create({
@@ -53,8 +54,10 @@ clerkRouter.post(
           where: { id: document.id },
           data: { qrCode: cloudinaryResult.url },
         });
+
+        return { url: cloudinaryResult.url };
       });
-      return res.status(200).json({ message: 'QR Generated' });
+      return res.status(200).json({ url });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: 'Failed to generate QR code' });
