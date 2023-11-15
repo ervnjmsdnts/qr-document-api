@@ -20,7 +20,7 @@ enum Department {
   BO
   AIASO
   MTO
-  GCO
+  GSO
   BAC
   MBO
 }
