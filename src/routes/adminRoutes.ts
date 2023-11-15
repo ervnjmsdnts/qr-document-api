@@ -6,6 +6,7 @@ import {
   RequestPasswordChangeStatus,
   UserRole,
 } from '@prisma/client';
+import cloudinary from '../utils/cloudinary';
 
 interface AdminChangeRequestSchema {
   requestId: string;
@@ -22,6 +23,11 @@ interface SignUpSchema {
 
 interface UserIdSchema {
   userId: string;
+}
+
+interface AttachImageSchema {
+  image: string;
+  documentId: string;
 }
 
 function generatePassword(length: number) {
@@ -204,6 +210,36 @@ adminRouter.post(
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: 'Failed to create user' });
+    }
+  },
+);
+
+adminRouter.post(
+  '/attach-image',
+  async (req: TypedRequestBody<AttachImageSchema>, res) => {
+    try {
+      const { documentId, image } = req.body;
+      const document = await prisma.document.findFirst({
+        where: { id: documentId },
+      });
+
+      if (!document) {
+        return res.status(404).json({ error: 'Document not found' });
+      }
+
+      const cloudinaryResponse = await cloudinary.uploader.upload(image);
+
+      await prisma.document.update({
+        where: { id: document.id },
+        data: { image: cloudinaryResponse.url },
+      });
+
+      return res.status(200).json({ message: 'Image added to document' });
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(500)
+        .json({ error: 'Failed to attach image to document' });
     }
   },
 );

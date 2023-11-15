@@ -29,6 +29,7 @@ model User {
   id                    String                  @id @unique @default(uuid())
   name                  String
   username              String                  @unique
+  picture               String?
   password              String
   department            Department
   contactNumber         String
@@ -66,23 +67,19 @@ enum DocumentType {
   PAYROLL
 }
 
-enum DocumentDepartmentStatus {
-  PENDING
-  CHECKED
-}
-
 model Document {
-  id                   String                   @id @unique @default(uuid())
-  qrCode               String?
-  title                String
-  amount               Float
-  status               DocumentStatus           @default(PENDING)
-  departmentOrigin     Department
-  type                 DocumentType
-  nextDepartment       Department?
-  nextDepartmentStatus DocumentDepartmentStatus @default(PENDING)
-  isCancelled          Boolean                  @default(false)
-  isArchived           Boolean                  @default(false)
-  createdAt            DateTime                 @default(now())
-  updatedAt            DateTime                 @updatedAt
+  id                 String         @id @unique @default(uuid())
+  qrCode             String?
+  image              String?
+  title              String
+  amount             Float
+  status             DocumentStatus @default(PENDING)
+  departmentOrigin   Department
+  type               DocumentType
+  nextDepartment     Department
+  checkedDepartments Department[]
+  isCancelled        Boolean        @default(false)
+  isArchived         Boolean        @default(false)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
 }
