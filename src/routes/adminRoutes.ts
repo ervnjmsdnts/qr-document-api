@@ -244,24 +244,22 @@ adminRouter.post(
   },
 );
 
-adminRouter.get(
-  '/get-user',
-  async (req: TypedRequestBody<{ userId: string }>, res) => {
-    try {
-      const user = await prisma.user.findFirst({
-        where: { id: req.body.userId },
-      });
+adminRouter.get('/get-user', async (req, res) => {
+  try {
+    const { userId } = req.query as { userId: string };
+    const user = await prisma.user.findFirst({
+      where: { id: userId },
+    });
 
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-
-      return res.status(200).json(user);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: 'Failed to get user' });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
     }
-  },
-);
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Failed to get user' });
+  }
+});
 
 export default adminRouter;
