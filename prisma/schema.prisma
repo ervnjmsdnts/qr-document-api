@@ -13,12 +13,36 @@ enum UserRole {
   CLERK
 }
 
+enum Department {
+  ToO
+  LCRO
+  EO
+  MO
+  AIASO
+  AgO
+  BPLO
+  GSO
+  PESO
+  AsO
+  HRMO
+  DRRMO
+  HSO
+  TrO
+  MISTU
+  PDO
+  SPIO
+  SBO
+  SWDO
+  BO
+  MENRO
+}
+
 model User {
   id                    String                  @id @unique @default(uuid())
   name                  String
   username              String                  @unique
   password              String
-  department            String
+  department            Department
   contactNumber         String
   role                  UserRole
   isActive              Boolean                 @default(true)
@@ -34,9 +58,43 @@ enum RequestPasswordChangeStatus {
 
 model RequestPasswordChange {
   id          String                      @id @unique @default(uuid())
-  user        User                        @relation(fields: [userId], references: [id])
+  user        User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
   newPassword String
   userId      String
   status      RequestPasswordChangeStatus @default(PENDING)
   createdAt   DateTime                    @default(now())
+}
+
+enum DocumentStatus {
+  PENDING
+  CHECKING
+  SIGNED
+}
+
+enum DocumentType {
+  MEMORANDUM
+  PURCHASE_REQUEST
+  VOUCHER_BILLING
+  PAYROLL
+}
+
+enum DocumentDepartmentStatus {
+  PENDING
+  CHECKED
+}
+
+model Document {
+  id                   String                   @id @unique @default(uuid())
+  qrCode               String?
+  title                String
+  amount               Float
+  status               DocumentStatus           @default(PENDING)
+  departmentOrigin     Department
+  type                 DocumentType
+  nextDepartment       Department?
+  nextDepartmentStatus DocumentDepartmentStatus @default(PENDING)
+  isCancelled          Boolean                  @default(false)
+  isArchived           Boolean                  @default(false)
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @updatedAt
 }

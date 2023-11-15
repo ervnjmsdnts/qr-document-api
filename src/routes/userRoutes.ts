@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import prisma from '../utils/prisma';
 import { TypedRequestBody } from '../types';
+import { Department, UserRole } from '@prisma/client';
 
 interface ChangePasswordRequestSchema {
   userId: string;
@@ -8,6 +9,12 @@ interface ChangePasswordRequestSchema {
 }
 
 const userRouter = Router();
+
+interface ScanQRSchema {
+  documentId: string;
+  userDepartment: Department;
+  userRole: UserRole;
+}
 
 userRouter.post(
   '/change-password-request',
@@ -36,6 +43,36 @@ userRouter.post(
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: 'Failed to process request' });
+    }
+  },
+);
+
+userRouter.post(
+  '/scan-qr',
+  async (req: TypedRequestBody<ScanQRSchema>, res) => {
+    try {
+      const { documentId, userDepartment } = req.body;
+      const document = await prisma.document.findFirst({
+        where: { id: documentId },
+      });
+
+      if (!document) {
+        return res.status(404).json({ error: 'Document not found' });
+      }
+
+      if (document.type === 'PURCHASE_REQUEST') {
+        const departmentSequence: Department[] = [
+          'BO',
+          'MENRO',
+          'DRRMO',
+          'AIASO',
+        ];
+      } else {
+        return res.status(404).json({ error: 'Unknown document type' });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Filed to scan QR code' });
     }
   },
 );

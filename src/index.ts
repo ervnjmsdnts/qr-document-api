@@ -4,6 +4,7 @@ import cors from 'cors';
 import authRouter from './routes/authRoutes';
 import adminRouter from './routes/adminRoutes';
 import userRouter from './routes/userRoutes';
+import clerkRouter from './routes/clerkRoutes';
 
 export const app = express();
 
@@ -18,6 +19,7 @@ app.get('/', (_, res) => {
 app.use('/api/auth', authRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/user', userRouter);
+app.use('/api/clerk', clerkRouter);
 
 const PORT = process.env.PORT || 8080;
 
