@@ -23,6 +23,7 @@ enum Department {
   GSO
   BAC
   MBO
+  IT
 }
 
 model User {
