@@ -199,7 +199,7 @@ adminRouter.post(
       if (userExist) {
         return res
           .status(404)
-          .json({ message: 'User with that username already exists' });
+          .json({ error: 'User with that username already exists' });
       }
 
       await prisma.user.create({
