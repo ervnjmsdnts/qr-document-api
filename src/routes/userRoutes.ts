@@ -78,6 +78,13 @@ async function checkDocument({
         },
       });
 
+      await prisma.notification.create({
+        data: {
+          content: `Document ${document.title} has been signed`,
+          documentId: document.id,
+        },
+      });
+
       return {
         message: 'Document signed',
         status: 200,
@@ -87,6 +94,13 @@ async function checkDocument({
     await prisma.document.update({
       where: { id: document.id },
       data: updates,
+    });
+
+    await prisma.notification.create({
+      data: {
+        documentId: document.id,
+        content: `${departmentSequence[currentIndex]} has checked the document ${document.title}`,
+      },
     });
 
     return {
@@ -225,12 +239,43 @@ userRouter.post(
 
 userRouter.get('/get-documents', async (_, res) => {
   try {
-    const documents = await prisma.document.findMany();
+    const documents = await prisma.document.findMany({
+      include: { user: true },
+    });
 
     return res.status(200).json(documents);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Failed to get documents' });
+  }
+});
+
+userRouter.get('/get-notifications', async (_, res) => {
+  try {
+    const notifications = await prisma.notification.findMany({
+      include: { document: { include: { user: true } } },
+    });
+
+    return res.status(200).json(notifications);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Failed to get notifications' });
+  }
+});
+
+userRouter.get('/get-user-notifications', async (req, res) => {
+  try {
+    const { userId } = req.query as { userId: string };
+
+    const userNotifications = await prisma.notification.findMany({
+      where: { document: { userId } },
+      include: { document: { include: { user: true } } },
+    });
+
+    return res.status(200).json(userNotifications);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Failed to get user notifications' });
   }
 });
 

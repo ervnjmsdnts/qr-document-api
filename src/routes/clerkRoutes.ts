@@ -9,7 +9,7 @@ interface ClerkGenerateQRSchema {
   title: string;
   amount: number;
   type: DocumentType;
-  departmentOrigin: Department;
+  userId: string;
 }
 
 interface ArchiveDocumentSchema {
